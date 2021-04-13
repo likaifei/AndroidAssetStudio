@@ -146,6 +146,7 @@ export class NinePatchGenerator extends BaseGenerator {
       // scale source graphic
       // TODO: support better-smoothing option
       let scale = dpi / values.sourceDensity;
+      scale = 1
       let outSize = {
         w: Math.ceil(this.stage.srcSize.w * scale) + 2,
         h: Math.ceil(this.stage.srcSize.h * scale) + 2
@@ -169,17 +170,26 @@ export class NinePatchGenerator extends BaseGenerator {
           outSize.w - 1, outSize.h - 1,
           1, -Math.ceil(scale * (this.stage.srcSize.h - this.stage.opticalBoundsRect.y - this.stage.opticalBoundsRect.h)));
 
+      let BLACK = [0, 0, 0, 255]
+      let WHITE = [255, 255, 255, 255]
       // draw nine-patch tick marks
-      fillRectImageData(outCtx, [0,0,0,255],
+      fillRectImageData(outCtx, BLACK,
+        1, 0,
+        outSize.w - 1, 1);
+      fillRectImageData(outCtx, BLACK,
+        0, 1,
+        1, outSize.h);
+
+      fillRectImageData(outCtx, WHITE,
           1 + Math.floor(scale * this.stage.stretchRect.x), 0,
           Math.ceil(scale * this.stage.stretchRect.w), 1);
-      fillRectImageData(outCtx, [0,0,0,255],
+      fillRectImageData(outCtx, WHITE,
           0, 1 + Math.floor(scale * this.stage.stretchRect.y),
           1, Math.ceil(scale * this.stage.stretchRect.h));
-      fillRectImageData(outCtx, [0,0,0,255],
+      fillRectImageData(outCtx, WHITE,
           1 + Math.floor(scale * this.stage.contentRect.x), outSize.h - 1,
           Math.ceil(scale * this.stage.contentRect.w), 1);
-      fillRectImageData(outCtx, [0,0,0,255],
+      fillRectImageData(outCtx, WHITE,
           outSize.w - 1, 1 + Math.floor(scale * this.stage.contentRect.y),
           1, Math.ceil(scale * this.stage.contentRect.h));
 

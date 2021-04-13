@@ -66,61 +66,70 @@ export class NinePatchPreview {
         l: this.stage.stretchRect.x,
         t: this.stage.stretchRect.y,
         r: this.stage.srcSize.w - this.stage.stretchRect.x - this.stage.stretchRect.w,
-        b: this.stage.srcSize.h - this.stage.stretchRect.y - this.stage.stretchRect.h
+        b: this.stage.srcSize.h - this.stage.stretchRect.y - this.stage.stretchRect.h,
+        w: this.stage.stretchRect.w,
+        h: this.stage.stretchRect.h
       };
+      let {x, y, w, h} = this.stage.stretchRect,
+      wTotal = this.size.w - w,
+      wl = wTotal * x / (x + (this.stage.srcSize.w - x - w)),
+      wr = wTotal - wl,
+      hTotal = this.size.h - h,
+      ht = hTotal * y / (y + (this.stage.srcSize.h - y - h)),
+      hb = hTotal - ht
 
       // TL
       if (fixed.l && fixed.t)
         ctx.drawImage(this.stage.srcCtx.canvas,
-            0, 0, fixed.l, fixed.t,
-            0, 0, fixed.l, fixed.t);
+          0, 0, fixed.l, fixed.t,
+          0, 0, wl, ht)
 
       // BL
       if (fixed.l && fixed.b)
         ctx.drawImage(this.stage.srcCtx.canvas,
-            0, this.stage.srcSize.h - fixed.b, fixed.l, fixed.b,
-            0, this.size.h - fixed.b, fixed.l, fixed.b);
+          0, this.stage.srcSize.h - fixed.b, fixed.l, fixed.b,
+          0, this.size.h - hb, wl, hb)
 
       // TR
       if (fixed.r && fixed.t)
         ctx.drawImage(this.stage.srcCtx.canvas,
             this.stage.srcSize.w - fixed.r, 0, fixed.r, fixed.t,
-            this.size.w - fixed.r, 0, fixed.r, fixed.t);
+            this.size.w - wr, 0, wr, ht);
 
       // BR
       if (fixed.r && fixed.b)
         ctx.drawImage(this.stage.srcCtx.canvas,
             this.stage.srcSize.w - fixed.r, this.stage.srcSize.h - fixed.b, fixed.r, fixed.b,
-            this.size.w - fixed.r, this.size.h - fixed.b, fixed.r, fixed.b);
+            this.size.w - wr, this.size.h - hb, wr, hb);
 
       // Top
       if (fixed.t)
         ctx.drawImage(this.stage.srcCtx.canvas,
             fixed.l, 0, this.stage.stretchRect.w, fixed.t,
-            fixed.l, 0, this.size.w - fixed.l - fixed.r, fixed.t);
+            wl, 0, w, ht);
 
       // Left
       if (fixed.l)
         ctx.drawImage(this.stage.srcCtx.canvas,
             0, fixed.t, fixed.l, this.stage.stretchRect.h,
-            0, fixed.t, fixed.l, this.size.h - fixed.t - fixed.b);
+            0, ht, wl, h);
 
       // Right
       if (fixed.r)
         ctx.drawImage(this.stage.srcCtx.canvas,
             this.stage.srcSize.w - fixed.r, fixed.t, fixed.r, this.stage.stretchRect.h,
-            this.size.w - fixed.r, fixed.t, fixed.r, this.size.h - fixed.t - fixed.b);
+            this.size.w - wr, ht, wr, h);
 
       // Bottom
       if (fixed.b)
         ctx.drawImage(this.stage.srcCtx.canvas,
             fixed.l, this.stage.srcSize.h - fixed.b, this.stage.stretchRect.w, fixed.b,
-            fixed.l, this.size.h - fixed.b, this.size.w - fixed.l - fixed.r, fixed.b);
+            wl, this.size.h - hb, w, hb);
 
       // Middle
       ctx.drawImage(this.stage.srcCtx.canvas,
           fixed.l, fixed.t, this.stage.stretchRect.w, this.stage.stretchRect.h,
-          fixed.l, fixed.t, this.size.w - fixed.l - fixed.r, this.size.h - fixed.t - fixed.b);
+          wl, ht, w, h);
 
       // preview content
       $('.preview-area .text-preview')
