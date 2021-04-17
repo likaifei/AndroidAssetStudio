@@ -140,13 +140,9 @@ export class NinePatchGenerator extends BaseGenerator {
     this.zipper.clear();
     this.zipper.setZipFilename(`${values.name}.9.zip`);
 
-    this.densities.forEach(density => {
-      let dpi = studio.Util.getDpiForDensity(density);
-
       // scale source graphic
       // TODO: support better-smoothing option
-      let scale = dpi / values.sourceDensity;
-      scale = 1
+      let scale = 1
       let outSize = {
         w: Math.ceil(this.stage.srcSize.w * scale) + 2,
         h: Math.ceil(this.stage.srcSize.h * scale) + 2
@@ -171,39 +167,43 @@ export class NinePatchGenerator extends BaseGenerator {
           1, -Math.ceil(scale * (this.stage.srcSize.h - this.stage.opticalBoundsRect.y - this.stage.opticalBoundsRect.h)));
 
       let BLACK = [0, 0, 0, 255]
-      let WHITE = [255, 255, 255, 255]
+      let TRANSPARENT = [0, 0, 0, 0]
       // draw nine-patch tick marks
+      // fill top
       fillRectImageData(outCtx, BLACK,
         1, 0,
         outSize.w - 1, 1);
-      fillRectImageData(outCtx, BLACK,
+      // fill left
+      fillRectImageData(outCtx, TRANSPARENT,
         0, 1,
         1, outSize.h);
-
-      fillRectImageData(outCtx, WHITE,
+      // x: left , y: 0, width: center, height: 1   fill top center
+      fillRectImageData(outCtx, TRANSPARENT,
           1 + Math.floor(scale * this.stage.stretchRect.x), 0,
           Math.ceil(scale * this.stage.stretchRect.w), 1);
-      fillRectImageData(outCtx, WHITE,
+      // x: 0, y: top, width: 1, height: center height // fill left center
+      fillRectImageData(outCtx, BLACK,
           0, 1 + Math.floor(scale * this.stage.stretchRect.y),
           1, Math.ceil(scale * this.stage.stretchRect.h));
-      fillRectImageData(outCtx, WHITE,
+      // fill bottom
+      fillRectImageData(outCtx, TRANSPARENT,
           1 + Math.floor(scale * this.stage.contentRect.x), outSize.h - 1,
           Math.ceil(scale * this.stage.contentRect.w), 1);
-      fillRectImageData(outCtx, WHITE,
+      // fill right
+      fillRectImageData(outCtx, TRANSPARENT,
           outSize.w - 1, 1 + Math.floor(scale * this.stage.contentRect.y),
           1, Math.ceil(scale * this.stage.contentRect.h));
 
       // add to zip and show preview
 
-      console.log(density, outCtx.getImageData(outSize.w - 1, Math.floor(outSize.h / 2), 1, 1).data.toString());
+      console.log('density', outCtx.getImageData(outSize.w - 1, Math.floor(outSize.h / 2), 1, 1).data.toString());
 
       this.zipper.add({
-        name: `res/drawable-${density}/${values.name}.9.png`,
+        name: `${values.name}.9.png`,
         canvas: outCtx.canvas
       });
 
-      this.setImageForSlot_(density, outCtx.canvas.toDataURL('image/png', 1.0));
-    });
+      this.setImageForSlot_('density', outCtx.canvas.toDataURL('image/png', 1.0));
   }
 }
 
